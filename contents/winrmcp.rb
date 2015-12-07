@@ -14,7 +14,11 @@ pass = ENV['RD_OPTION_WINRMPASS'].dup if ENV['RD_OPTION_WINRMPASS'] && (override
 
 file = ARGV[1]
 dest = ARGV[2]
-endpoint = "http://#{host}:#{port}/wsman"
+
+http_protocol = auth == "selfsignedcert" ? "https" : "http"
+endpoint = "#{http_protocol}://#{host}:#{port}/wsman"
+ooutput = ''
+eoutput = ''
 
 # Wrapper to fix: "not setting executing flags by rundeck for 2nd file in plugin"
 # # https://github.com/rundeck/rundeck/issues/1421
@@ -45,6 +49,8 @@ when 'plaintext'
   winrm = WinRM::WinRMWebService.new(endpoint, :plaintext, user: user, pass: pass, disable_sspi: true)
 when 'ssl'
   winrm = WinRM::WinRMWebService.new(endpoint, :ssl, user: user, pass: pass, disable_sspi: true)
+when 'selfsignedcert'
+  winrm = WinRM::WinRMWebService.new(endpoint, :ssl, user: user, pass: pass, :no_ssl_peer_verification =>  true, disable_sspi: true)
 else
   fail "Invalid authtype '#{auth}' specified, expected: kerberos, plaintext, ssl."
 end

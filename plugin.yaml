@@ -121,7 +121,7 @@ providers:
         title: Auth type
         description: "Autentification type"
         type: Select
-        values: "kerberos, plaintext, ssl"
+        values: "kerberos, plaintext, ssl, selfsignedcert"
         default: "plaintext"
         required: true
         scope: Instance
